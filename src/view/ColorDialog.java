@@ -67,6 +67,9 @@ public class ColorDialog extends JDialog {
 		JPanel cmykPanel = createCMYKPanel(result, imageWidths);
 		tabbedPane.addTab("CMYK", cmykPanel);
 		
+		JPanel ycbcrPanel = createYCbCrPanel(result, imageWidths);
+		tabbedPane.addTab("YCbCr", ycbcrPanel);
+		
 		JPanel hsvPanel = createHSVPanel(result, imageWidths);
 		tabbedPane.addTab("HSV", hsvPanel);
 		
@@ -138,6 +141,28 @@ public class ColorDialog extends JDialog {
 		panel.add(csMagenta);
 		panel.add(csYellow);
 		panel.add(csBlack);
+		
+		return panel;
+	}
+	
+	private JPanel createYCbCrPanel(ColorDialogResult result, int imageWidths) {
+		
+		// ycbcrMediator = new YCbCrColorMediator(result, imageWidths, 30);
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		ColorSlider csRed = new ColorSlider("R:", result.getPixel().getRed(), rgbMediator.getRedImage());
+		ColorSlider csGreen = new ColorSlider("G:", result.getPixel().getGreen(), rgbMediator.getGreenImage());
+		ColorSlider csBlue = new ColorSlider("B:", result.getPixel().getBlue(), rgbMediator.getBlueImage());
+		
+		rgbMediator.setRedCS(csRed);
+		rgbMediator.setGreenCS(csGreen);
+		rgbMediator.setBlueCS(csBlue);
+		
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(csRed);
+		panel.add(csGreen);
+		panel.add(csBlue);
 		
 		return panel;
 	}
