@@ -15,21 +15,27 @@
 
 package view;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import model.ObserverIF;
 import model.Pixel;
 
 class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
-	ColorSlider redCS;
-	ColorSlider greenCS;
-	ColorSlider blueCS;
+	ColorSlider hCS;
+	ColorSlider sCS;
+	ColorSlider vCS;
+	
+	float[] hsv;
+	
 	int red;
 	int green;
 	int blue;
-	BufferedImage redImage;
+	
+	BufferedImage HueImage;
 	BufferedImage greenImage;
 	BufferedImage blueImage;
+	
 	int imagesWidth;
 	int imagesHeight;
 	ColorDialogResult result;
@@ -43,12 +49,16 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 		this.result = result;
 		result.addObserver(this);
 		
-		redImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
+		hsv = Color.RGBtoHSB(red, green, blue, null);
+		//int hue = (int) Math.round(360 * hsv[0]);
+		
+		HueImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
 		greenImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
 		blueImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-		computeRedImage(red, green, blue);
-		computeGreenImage(red, green, blue);
-		computeBlueImage(red, green, blue); 	
+		
+		computeHueImage(hsv);
+		computeSaturationImage(hsv);
+		computeValueImage(hsv); 	
 	}
 	
 	
@@ -56,54 +66,58 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 	 * @see View.SliderObserver#update(double)
 	 */
 	public void update(ColorSlider s, int v) {
-		boolean updateRed = false;
-		boolean updateGreen = false;
-		boolean updateBlue = false;
-		if (s == redCS && v != red) {
+		boolean updateH = false;
+		boolean updateS = false;
+		boolean updateV = false;
+		if (s == hCS && v != red) {
 			red = v;
-			updateGreen = true;
-			updateBlue = true;
+			updateS = true;
+			updateV = true;
 		}
-		if (s == greenCS && v != green) {
+		if (s == sCS && v != green) {
 			green = v;
-			updateRed = true;
-			updateBlue = true;
+			updateH = true;
+			updateV = true;
 		}
-		if (s == blueCS && v != blue) {
+		if (s == vCS && v != blue) {
 			blue = v;
-			updateRed = true;
-			updateGreen = true;
+			updateH = true;
+			updateS = true;
 		}
-		if (updateRed) {
-			computeRedImage(red, green, blue);
+		if (updateH) {
+			computeHueImage(hsv);
 		}
-		if (updateGreen) {
-			computeGreenImage(red, green, blue);
+		if (updateS) {
+			computeSaturationImage(hsv);
 		}
-		if (updateBlue) {
-			computeBlueImage(red, green, blue);
+		if (updateV) {
+			computeValueImage(hsv);
 		}
 		
 		Pixel pixel = new Pixel(red, green, blue, 255);
 		result.setPixel(pixel);
 	}
 	
-	public void computeRedImage(int red, int green, int blue) { 
-		Pixel p = new Pixel(red, green, blue, 255); 
+	public void computeHueImage(float[] hsv) { 
+		Pixel p = new Pixel((int)getRed(), (int)getBlue(), (int)getGreen(), 255); 
+		
+		
+		
 		for (int i = 0; i<imagesWidth; ++i) {
 			p.setRed((int)(((double)i / (double)imagesWidth)*255.0)); 
 			int rgb = p.getARGB();
 			for (int j = 0; j<imagesHeight; ++j) {
-				redImage.setRGB(i, j, rgb);
+				HueImage.setRGB(i, j, rgb);
 			}
 		}
-		if (redCS != null) {
-			redCS.update(redImage);
+		if (hCS != null) {
+			hCS.update(HueImage);
 		}
 	}
 	
-	public void computeGreenImage(int red, int green, int blue) {
+	public void computeSaturationImage(float[] hsv) {
 		Pixel p = new Pixel(red, green, blue, 255); 
+				
 		for (int i = 0; i<imagesWidth; ++i) {
 			p.setGreen((int)(((double)i / (double)imagesWidth)*255.0)); 
 			int rgb = p.getARGB();
@@ -111,13 +125,14 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 				greenImage.setRGB(i, j, rgb);
 			}
 		}
-		if (greenCS != null) {
-			greenCS.update(greenImage);
+		if (sCS != null) {
+			sCS.update(greenImage);
 		}
 	}
 	
-	public void computeBlueImage(int red, int green, int blue) { 
+	public void computeValueImage(float[] hsv) { 
 		Pixel p = new Pixel(red, green, blue, 255); 
+		
 		for (int i = 0; i<imagesWidth; ++i) {
 			p.setBlue((int)(((double)i / (double)imagesWidth)*255.0)); 
 			int rgb = p.getARGB();
@@ -125,8 +140,8 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 				blueImage.setRGB(i, j, rgb);
 			}
 		}
-		if (blueCS != null) {
-			blueCS.update(blueImage);
+		if (vCS != null) {
+			vCS.update(blueImage);
 		}
 	}
 	
@@ -147,54 +162,82 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 	/**
 	 * @return
 	 */
-	public BufferedImage getRedImage() {
-		return redImage;
+	public BufferedImage getHueImage() {
+		return HueImage;
 	}
 
 	/**
 	 * @param slider
 	 */
-	public void setRedCS(ColorSlider slider) {
-		redCS = slider;
+	public void sethCS(ColorSlider slider) {
+		hCS = slider;
 		slider.addObserver(this);
 	}
 
 	/**
 	 * @param slider
 	 */
-	public void setGreenCS(ColorSlider slider) {
-		greenCS = slider;
+	public void setsCS(ColorSlider slider) {
+		sCS = slider;
 		slider.addObserver(this);
 	}
 
 	/**
 	 * @param slider
 	 */
-	public void setBlueCS(ColorSlider slider) {
-		blueCS = slider;
+	public void setvCS(ColorSlider slider) {
+		vCS = slider;
 		slider.addObserver(this);
 	}
 	/**
 	 * @return
 	 */
 	public double getBlue() {
-		return blue;
+		Color c = new Color(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]));
+		return c.getBlue();
 	}
 
 	/**
 	 * @return
 	 */
 	public double getGreen() {
-		return green;
+		Color c = new Color(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]));
+		return c.getGreen();
 	}
 
 	/**
 	 * @return
 	 */
 	public double getRed() {
-		return red;
+		Color c = new Color(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]));
+		return c.getRed();
 	}
 
+	public double getHue() {
+		return hsv[0];
+	}
+	
+	public double getSat() {
+		return hsv[1];
+	}
+	
+	public double getVal() {
+		return hsv[2];
+	}
+	
+	private int[] convertHSVtoRGB(float[] hsv) {
+		return convertHSVtoRGB(hsv[0], hsv[1], hsv[2]);
+	}
+	
+	private int[] convertHSVtoRGB(float h, float s, float v) {
+		Color c = new Color(Color.HSBtoRGB(h, s, v));
+		int[] rgb = new int[3];
+		rgb[0] = c.getRed();
+		rgb[1] = c.getGreen();
+		rgb[2] = c.getBlue();
+		
+		return rgb;
+	}
 
 	/* (non-Javadoc)
 	 * @see model.ObserverIF#update()
@@ -209,12 +252,12 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 		green = result.getPixel().getGreen();
 		blue = result.getPixel().getBlue();
 		
-		redCS.setValue(red);
-		greenCS.setValue(green);
-		blueCS.setValue(blue);
-		computeRedImage(red, green, blue);
-		computeGreenImage(red, green, blue);
-		computeBlueImage(red, green, blue);
+		hCS.setValue(red);
+		sCS.setValue(green);
+		vCS.setValue(blue);
+		computeHueImage(hsv);
+		computeSaturationImage(hsv);
+		computeValueImage(hsv);
 		
 		// Efficiency issue: When the color is adjusted on a tab in the 
 		// user interface, the sliders color of the other tabs are recomputed,
