@@ -151,24 +151,40 @@ public class ColorDialog extends JDialog {
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		ColorSlider csRed = new ColorSlider("Y:", result.getPixel().getRed(), rgbMediator.getRedImage());
-		ColorSlider csGreen = new ColorSlider("Cb:", result.getPixel().getGreen(), rgbMediator.getGreenImage());
-		ColorSlider csBlue = new ColorSlider("Cr:", result.getPixel().getBlue(), rgbMediator.getBlueImage());
+		ColorSlider csY = new ColorSlider("Y:", result.getPixel().getRed(), rgbMediator.getRedImage());
+		ColorSlider csCb = new ColorSlider("Cb:", result.getPixel().getGreen(), rgbMediator.getGreenImage());
+		ColorSlider csCr = new ColorSlider("Cr:", result.getPixel().getBlue(), rgbMediator.getBlueImage());
 		
-		ycbcrMediator.setRedCS(csRed);
-		ycbcrMediator.setGreenCS(csGreen);
-		ycbcrMediator.setBlueCS(csBlue);
+		ycbcrMediator.setRedCS(csY);
+		ycbcrMediator.setGreenCS(csCb);
+		ycbcrMediator.setBlueCS(csCr);
 		
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		panel.add(csRed);
-		panel.add(csGreen);
-		panel.add(csBlue);
+		panel.add(csY);
+		panel.add(csCb);
+		panel.add(csCr);
 		
 		return panel;
 	}
 	
 	private JPanel createHSVPanel(ColorDialogResult result, int imageWidths) {	
+
+		HSVColorMediator hsvMediator = new HSVColorMediator(result, imageWidths, 30);
+		
 		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		ColorSlider csH = new ColorSlider("H:", result.getPixel().getRed(), rgbMediator.getRedImage());
+		ColorSlider csS = new ColorSlider("S:", result.getPixel().getGreen(), rgbMediator.getGreenImage());
+		ColorSlider csV = new ColorSlider("V:", result.getPixel().getBlue(), rgbMediator.getBlueImage());
+		
+		hsvMediator.setRedCS(csH);
+		hsvMediator.setGreenCS(csS);
+		hsvMediator.setBlueCS(csV);
+		
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(csH);
+		panel.add(csS);
+		panel.add(csV);
 		
 		return panel;
 	}
