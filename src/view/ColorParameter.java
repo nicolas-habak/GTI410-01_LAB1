@@ -56,7 +56,7 @@ public class ColorParameter extends JPanel implements DocObserver {
 				public void actionPerformed(ActionEvent ae) {
 	        		System.out.println("Color change : Processing ...");
 	        		Application app = Application.getInstance();
-					Pixel p = ColorDialog.getColor(app, pixel, 150);
+					Pixel p = ColorDialog.getColor(app, pixel, ColorDialog.DEFAULT_WIDTH);
 					if (p!=null) {
 						ColorChangeCommand c = new ColorChangeCommand(p,
 						        app.getActiveDocument().getSelectedObjects());

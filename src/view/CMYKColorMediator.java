@@ -245,11 +245,11 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		
 		cmyk = convertRGBAtoCMYK(result.getPixel());
 		
-		cs[CYAN].setValue((int)(255 * cmyk[0]));
-		cs[MAGENTA].setValue((int)(255 * cmyk[1]));
-		cs[YELLOW].setValue((int)(255 * cmyk[2]));
-		cs[BLACK].setValue((int)(255 * cmyk[3]));
-		
+		cs[CYAN].setValue((int)(255.0f * cmyk[0]));
+		cs[MAGENTA].setValue((int)(255.0f * cmyk[1]));
+		cs[YELLOW].setValue((int)(255.0f * cmyk[2]));
+		cs[BLACK].setValue((int)(255.0f * cmyk[3]));
+
 		computeImage(CYAN);
 		computeImage(MAGENTA);
 		computeImage(YELLOW);
@@ -265,20 +265,20 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 	}
 	
 	private float[] convertRGBAtoCMYK(int red, int green, int blue) {
-		red /= 255;
-		green /= 255;
-		blue /= 255;
+		float normalizedRed = (float) red / 255;
+		float normalizedGreen = (float) green / 255;
+		float normalizedBlue = (float) red / 255;
 		
 		float[] cmyk = new float[4];
-		cmyk[3] = 1.0f - Math.max(Math.max(red, green), blue);
-		cmyk[0] = 1.0f - red - cmyk[3];
-		cmyk[1] = 1.0f - green - cmyk[3];
-		cmyk[2] = 1.0f - blue - cmyk[3];
+		cmyk[3] = 1.0f - Math.max(Math.max(normalizedRed, normalizedGreen), normalizedBlue);
+		cmyk[0] = 1.0f - normalizedRed - cmyk[3];
+		cmyk[1] = 1.0f - normalizedGreen - cmyk[3];
+		cmyk[2] = 1.0f - normalizedBlue - cmyk[3];
 		
 		if(cmyk[3] < 1) {
-			cmyk[0] /= (1 - cmyk[3]);
-			cmyk[0] /= (1 - cmyk[3]);
-			cmyk[0] /= (1 - cmyk[3]);
+			cmyk[0] /= (1.0f - cmyk[3]);
+			cmyk[0] /= (1.0f - cmyk[3]);
+			cmyk[0] /= (1.0f - cmyk[3]);
 		}
 		return cmyk;
 	}

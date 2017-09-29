@@ -60,7 +60,7 @@ public class FillColorsMediator {
 			new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					Application app = Application.getInstance();
-					Pixel p = ColorDialog.getColor(app, fill, 150);
+					Pixel p = ColorDialog.getColor(app, fill, ColorDialog.DEFAULT_WIDTH);
 					setFillColor(p);
 				};
 			});
@@ -73,7 +73,7 @@ public class FillColorsMediator {
 			new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					Application app = Application.getInstance();
-					Pixel p = ColorDialog.getColor(app, border, 150);
+					Pixel p = ColorDialog.getColor(app, border, ColorDialog.DEFAULT_WIDTH);
 						setBorderColor(p);
 				};
 			});

@@ -42,6 +42,7 @@ public class ColorDialog extends JDialog {
 	private RGBColorMediator rgbMediator;
 	private ActionListener okActionListener;
 	private ColorDialogResult result;
+	public static final int DEFAULT_WIDTH = 200;
 	
 	static public Pixel getColor(Frame owner, Pixel color, int imageWidths) {
 		ColorDialogResult result = new ColorDialogResult(color);
