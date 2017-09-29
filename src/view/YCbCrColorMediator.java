@@ -108,13 +108,14 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		int[] cmyk = this.ycbcr.clone();
 		int[] rgba;
 		for (int i = 0; i < imagesWidth; ++i) {
-			cmyk[index] = i / (int)imagesWidth;
+			cmyk[index] = (int)(((double)i / (double)imagesWidth)*255.0);
 			
 			rgba = convertYCbCrtoRGB(cmyk);
 			
 			p.setRed(rgba[0]);
 			p.setGreen(rgba[1]);
 			p.setBlue(rgba[2]);
+			p.setAlpha(255);
 			
 			int rgb = p.getARGB();
 			
