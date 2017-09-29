@@ -24,12 +24,17 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 	ColorSlider yCS;
 	ColorSlider cbCS;
 	ColorSlider crCS;
-	int red;
+	
+	/*int red;
 	int green;
-	int blue;
+	int blue;*/
+	
+	int[] ycbcr;
+	
 	BufferedImage redImage;
 	BufferedImage greenImage;
 	BufferedImage blueImage;
+	
 	int imagesWidth;
 	int imagesHeight;
 	ColorDialogResult result;
@@ -37,18 +42,24 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 	YCbCrColorMediator(ColorDialogResult result, int imagesWidth, int imagesHeight) {
 		this.imagesWidth = imagesWidth;
 		this.imagesHeight = imagesHeight;
-		this.red = result.getPixel().getRed();
-		this.green = result.getPixel().getGreen();
-		this.blue = result.getPixel().getBlue();
+		
+		int red = result.getPixel().getRed();
+		int green = result.getPixel().getGreen();
+		int blue = result.getPixel().getBlue();
+		
+		ycbcr = convertRGBtoYCbCr(red, green, blue);
+		
 		this.result = result;
 		result.addObserver(this);
 		
 		redImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
 		greenImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
 		blueImage = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-		computeRedImage(red, green, blue);
-		computeGreenImage(red, green, blue);
-		computeBlueImage(red, green, blue); 	
+		
+		computeRedImage(ycbcr);
+		computeGreenImage(ycbcr);
+		computeBlueImage(ycbcr); 	
+		
 	}
 	
 	
@@ -59,37 +70,41 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		boolean updateRed = false;
 		boolean updateGreen = false;
 		boolean updateBlue = false;
-		if (s == yCS && v != red) {
-			red = v;
+		if (s == yCS && v != ycbcr[0]) {
+			ycbcr[0] = v;
 			updateGreen = true;
 			updateBlue = true;
 		}
-		if (s == cbCS && v != green) {
-			green = v;
+		if (s == cbCS && v != ycbcr[1]) {
+			ycbcr[1] = v;
 			updateRed = true;
 			updateBlue = true;
 		}
-		if (s == crCS && v != blue) {
-			blue = v;
+		if (s == crCS && v != ycbcr[2]) {
+			ycbcr[2] = v;
 			updateRed = true;
 			updateGreen = true;
 		}
 		if (updateRed) {
-			computeRedImage(red, green, blue);
+			computeRedImage(ycbcr);
 		}
 		if (updateGreen) {
-			computeGreenImage(red, green, blue);
+			computeGreenImage(ycbcr);
 		}
 		if (updateBlue) {
-			computeBlueImage(red, green, blue);
+			computeBlueImage(ycbcr);
 		}
 		
-		Pixel pixel = new Pixel(red, green, blue, 255);
+		Pixel pixel = new Pixel(getRed(), getGreen(), getBlue(), 255);
 		result.setPixel(pixel);
+		
+		//int[] ycbcr = convertRGBtoYCbCr(red,green,blue);
+		
+		//System.out.println("y:"+ycbcr[0]+" cb:"+ycbcr[1]+" cr:"+ycbcr[2]);
 	}
 	
-	public void computeRedImage(int red, int green, int blue) { 
-		Pixel p = new Pixel(red, green, blue, 255); 
+	public void computeRedImage(int[] ycbcr) { 
+		Pixel p = new Pixel(getRed(), getGreen(), getBlue(), 255); 
 		for (int i = 0; i<imagesWidth; ++i) {
 			p.setRed((int)(((double)i / (double)imagesWidth)*255.0)); 
 			int rgb = p.getARGB();
@@ -102,8 +117,8 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		}
 	}
 	
-	public void computeGreenImage(int red, int green, int blue) {
-		Pixel p = new Pixel(red, green, blue, 255); 
+	public void computeGreenImage(int[] ycbcr) {
+		Pixel p = new Pixel(getRed(), getGreen(), getBlue(), 255); 
 		for (int i = 0; i<imagesWidth; ++i) {
 			p.setGreen((int)(((double)i / (double)imagesWidth)*255.0)); 
 			int rgb = p.getARGB();
@@ -116,8 +131,8 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		}
 	}
 	
-	public void computeBlueImage(int red, int green, int blue) { 
-		Pixel p = new Pixel(red, green, blue, 255); 
+	public void computeBlueImage(int[] ycbcr) { 
+		Pixel p = new Pixel(getRed(), getGreen(), getBlue(), 255); 
 		for (int i = 0; i<imagesWidth; ++i) {
 			p.setBlue((int)(((double)i / (double)imagesWidth)*255.0)); 
 			int rgb = p.getARGB();
@@ -177,22 +192,48 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 	/**
 	 * @return
 	 */
-	public double getBlue() {
-		return blue;
+	public int getBlue() {
+		return convertYCbCrtoRGB(ycbcr)[2];
 	}
 
 	/**
 	 * @return
 	 */
-	public double getGreen() {
-		return green;
+	public int getGreen() {
+		return convertYCbCrtoRGB(ycbcr)[1];
 	}
 
 	/**
 	 * @return
 	 */
-	public double getRed() {
-		return red;
+	public int getRed() {
+		return convertYCbCrtoRGB(ycbcr)[1];
+	}
+	
+	private int[] convertRGBtoYCbCr(int red, int green, int blue) {
+		
+		int[] ycbcr = new int[3];
+		
+		ycbcr[0] = (int)(0.299*red + 0.587*green + 0.114*blue + 0.5);
+		ycbcr[1] = (int) (-0.1687*red-0.3313*green+0.5*blue+128 + 0.5);
+		ycbcr[2] = (int) (0.5*red-0.4187*green-0.0813*blue+128 + 0.5);
+		
+		return ycbcr;
+	}
+	
+	private int[] convertYCbCrtoRGB(int[] ycbcr) {
+		
+		int[] rgb = new int[3];
+		
+		int y = ycbcr[0];
+		int cb = ycbcr[1];
+		int cr = ycbcr[2];
+		
+		rgb[0] = (int) (y + 1.4*(cr-128) + 0.5);
+		rgb[1] = (int) (y - 0.343*(cb-128) - 0.711*(cr-128) + 0.5);
+		rgb[2] = (int) (y + 1.765*(cb-128) + 0.5);
+				
+		return rgb;
 	}
 
 
@@ -202,19 +243,21 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 	public void update() {
 		// When updated with the new "result" color, if the "currentColor"
 		// is aready properly set, there is no need to recompute the images.
-		Pixel currentColor = new Pixel(red, green, blue, 255);
+		Pixel currentColor = new Pixel(getRed(), getGreen(), getBlue(), 255);
 		if(currentColor.getARGB() == result.getPixel().getARGB()) return;
 		
-		red = result.getPixel().getRed();
-		green = result.getPixel().getGreen();
-		blue = result.getPixel().getBlue();
+		ycbcr = convertRGBtoYCbCr(result.getPixel().getRed(),result.getPixel().getGreen(),result.getPixel().getBlue());
+		
+		int red = result.getPixel().getRed();
+		int green = result.getPixel().getGreen();
+		int blue = result.getPixel().getBlue();
 		
 		yCS.setValue(red);
 		cbCS.setValue(green);
 		crCS.setValue(blue);
-		computeRedImage(red, green, blue);
-		computeGreenImage(red, green, blue);
-		computeBlueImage(red, green, blue);
+		computeRedImage(ycbcr);
+		computeGreenImage(ycbcr);
+		computeBlueImage(ycbcr);
 		
 		// Efficiency issue: When the color is adjusted on a tab in the 
 		// user interface, the sliders color of the other tabs are recomputed,
