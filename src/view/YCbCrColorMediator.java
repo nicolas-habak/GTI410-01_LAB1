@@ -40,10 +40,9 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		this.imagesWidth = imagesWidth;
 		this.imagesHeight = imagesHeight;
 		
-		ycbcr = convertRGBtoYCbCr(result.getPixel());
-		
-		images = new BufferedImage[4];
-		cs = new ColorSlider[4];
+		ycbcr = convertRGBtoYCbCr(result.getPixel());		
+		images = new BufferedImage[3];
+		cs = new ColorSlider[3];
 		
 		this.result = result;
 		result.addObserver(this);
@@ -226,13 +225,13 @@ private int[] convertRGBtoYCbCr(int r, int g, int b) {
 		
 		int[] ycbcr = new int[3];
 		
-		/*ycbcr[0] = (int)(0.299*red + 0.587*green + 0.114*blue + 0.5);
-		ycbcr[1] = (int) (-0.1687*red-0.3313*green+0.5*blue+128 + 0.5);
-		ycbcr[2] = (int) (0.5*red-0.4187*green-0.0813*blue+128 + 0.5);*/
+		ycbcr[0] = (int)(0.299*r + 0.587*g + 0.114*b + 0.5);
+		ycbcr[1] = (int) (-0.1687*r-0.3313*g+0.5*b+128 + 0.5);
+		ycbcr[2] = (int) (0.5*r-0.4187*g-0.0813*b+128 + 0.5);
 	
-		ycbcr[0] =  16 + ((int) ( 65.738 * r + 129.057 * g + 25.064 * b  )) >> 8;
+	/*	ycbcr[0] =  16 + ((int) ( 65.738 * r + 129.057 * g + 25.064 * b  )) >> 8;
 		ycbcr[1] = 128 + ((int) (-37.945 * r + -74.494 * g + 112.439 * b  )) >> 8;
-        ycbcr[2] = 128 + ((int) (112.439 * r + -97.154 * g + -18.285 * b  )) >> 8;
+        ycbcr[2] = 128 + ((int) (112.439 * r + -97.154 * g + -18.285 * b  )) >> 8;*/
 
         for (int i=0; i<3; i++) {
         	if (ycbcr[i] > 255)
@@ -257,13 +256,13 @@ private int[] convertYCbCrtoRGB(int y, int cb, int cr) {
 		
 		int[] rgb = new int[3];
 		
-		/*rgb[0] = (int) (y + 1.4*(cr-128) + 0.5);
+		rgb[0] = (int) (y + 1.4*(cr-128) + 0.5);
 		rgb[1] = (int) (y - 0.343*(cb-128) - 0.711*(cr-128) + 0.5);
-		rgb[2] = (int) (y + 1.765*(cb-128) + 0.5);*/
+		rgb[2] = (int) (y + 1.765*(cb-128) + 0.5);
 		
-		rgb[0] = ((int) (298.082*(y - 16) + 408.583*(cr - 128))) >> 8;
+	/*	rgb[0] = ((int) (298.082*(y - 16) + 408.583*(cr - 128))) >> 8;
     	rgb[1] = ((int) (298.082*(y - 16) - 100.291*(cb - 128) - 208.120 * (cr - 128))) >> 8;
-    	rgb[2] = ((int) (298.082*(y - 16) + 516.411*(cb - 128))) >> 8;
+    	rgb[2] = ((int) (298.082*(y - 16) + 516.411*(cb - 128))) >> 8;*/
 
     	for (int i=0; i<3; i++) {
     		if (rgb[i] > 255)
