@@ -174,9 +174,9 @@ public class ColorDialog extends JDialog {
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		ColorSlider csH = new ColorSlider("H:", result.getPixel().getRed(), rgbMediator.getRedImage());
-		ColorSlider csS = new ColorSlider("S:", result.getPixel().getGreen(), rgbMediator.getGreenImage());
-		ColorSlider csV = new ColorSlider("V:", result.getPixel().getBlue(), rgbMediator.getBlueImage());
+		ColorSlider csH = new ColorSlider("H:", result.getPixel().getRed(), hsvMediator.getHueImage());
+		ColorSlider csS = new ColorSlider("S:", result.getPixel().getGreen(), hsvMediator.getSaturationImage());
+		ColorSlider csV = new ColorSlider("V:", result.getPixel().getBlue(), hsvMediator.getValueImage());
 		
 		hsvMediator.sethCS(csH);
 		hsvMediator.setsCS(csS);

@@ -51,15 +51,11 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		this.result = result;
 		result.addObserver(this);
 		
-		images[CYAN] = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-		images[MAGENTA] = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-		images[YELLOW] = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-		images[BLACK] = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-
-		computeImage(CYAN);
-		computeImage(MAGENTA);
-		computeImage(YELLOW);
-		computeImage(BLACK);
+		for(int i = 0; i < images.length; i ++)
+		{
+			images[i] = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
+			computeImage(i);
+		}
 	}
 	
 	
@@ -125,7 +121,7 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		float[] cmyk = this.cmyk.clone();
 		int[] rgba;
 		for (int i = 0; i < imagesWidth; ++i) {
-			cmyk[index] = i / (float)imagesWidth;
+			cmyk[index] = (float)i / (float)imagesWidth;
 			
 			rgba = convertCMYKtoRGBA(cmyk);
 			
@@ -245,15 +241,10 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		
 		cmyk = convertRGBAtoCMYK(result.getPixel());
 		
-		cs[CYAN].setValue((int)(255.0f * cmyk[0]));
-		cs[MAGENTA].setValue((int)(255.0f * cmyk[1]));
-		cs[YELLOW].setValue((int)(255.0f * cmyk[2]));
-		cs[BLACK].setValue((int)(255.0f * cmyk[3]));
-
-		computeImage(CYAN);
-		computeImage(MAGENTA);
-		computeImage(YELLOW);
-		computeImage(BLACK);
+		for(int i = 0; i < cmyk.length; i++) {
+			cs[i].setValue((int)(255.0f * cmyk[i]));
+			computeImage(i);
+		}
 		
 		// Efficiency issue: When the color is adjusted on a tab in the 
 		// user interface, the sliders color of the other tabs are recomputed,
@@ -267,7 +258,7 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 	private float[] convertRGBAtoCMYK(int red, int green, int blue) {
 		float normalizedRed = (float) red / 255;
 		float normalizedGreen = (float) green / 255;
-		float normalizedBlue = (float) red / 255;
+		float normalizedBlue = (float) blue / 255;
 		
 		float[] cmyk = new float[4];
 		cmyk[3] = 1.0f - Math.max(Math.max(normalizedRed, normalizedGreen), normalizedBlue);
@@ -277,8 +268,8 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		
 		if(cmyk[3] < 1) {
 			cmyk[0] /= (1.0f - cmyk[3]);
-			cmyk[0] /= (1.0f - cmyk[3]);
-			cmyk[0] /= (1.0f - cmyk[3]);
+			cmyk[1] /= (1.0f - cmyk[3]);
+			cmyk[2] /= (1.0f - cmyk[3]);
 		}
 		return cmyk;
 	}
