@@ -233,6 +233,11 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 		else
 			hsv[0] = 60.0f * ((normRGB[0] - normRGB[1]) / delta + 4);
 		
+		if(hsv[0] < 0)
+			hsv[0] += 360;
+		else if (hsv[0] > 360)
+			hsv[0] -= 360;
+		
 		if(cmax == 0)
 			hsv[1] = 0;
 		else
