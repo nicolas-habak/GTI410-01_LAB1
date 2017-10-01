@@ -130,23 +130,23 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 	/**
 	 * @return
 	 */
-	public BufferedImage getValueImage() {
-		return images[VALUE];
+	public BufferedImage getHueImage() {
+		return images[HUE];
 	}
-
+	
 	/**
 	 * @return
 	 */
 	public BufferedImage getSaturationImage() {
 		return images[SATURATION];
 	}
-
+	
 	/**
 	 * @return
 	 */
-	public BufferedImage getHueImage() {
-		return images[HUE];
-	}
+	public BufferedImage getValueImage() {
+		return images[VALUE];
+	}	
 
 	/**
 	 * @param slider

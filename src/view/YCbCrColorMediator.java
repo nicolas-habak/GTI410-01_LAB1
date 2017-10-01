@@ -104,17 +104,17 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 	
 	public void computeImage(int index) {
 		Pixel p = new Pixel();
-		int[] cmyk = this.ycbcr.clone();
+		int[] ycbcr = this.ycbcr.clone();
 		int[] rgba;
 		for (int i = 0; i < imagesWidth; ++i) {
-			cmyk[index] = (int)(((double)i / (double)imagesWidth)*255.0);
+			ycbcr[index] = (int)(((double)i / (double)imagesWidth)*255.0);
 			
-			rgba = convertYCbCrtoRGB(cmyk);
+			rgba = convertYCbCrtoRGB(ycbcr);
 			
 			p.setRed(rgba[0]);
 			p.setGreen(rgba[1]);
 			p.setBlue(rgba[2]);
-			p.setAlpha(255);
+			p.setAlpha(rgba[3]);
 			
 			int rgb = p.getARGB();
 			
@@ -130,22 +130,22 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 	/**
 	 * @return
 	 */
-	public BufferedImage getCRImage() {
-		return images[CR];
+	public BufferedImage getYImage() {
+		return images[Y];
 	}
-
+	
 	/**
 	 * @return
 	 */
 	public BufferedImage getCBImage() {
 		return images[CB];
 	}
-
+	
 	/**
 	 * @return
 	 */
-	public BufferedImage getYImage() {
-		return images[Y];
+	public BufferedImage getCRImage() {
+		return images[CR];
 	}
 
 	/**
@@ -221,7 +221,7 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		// harder to understand.
 	}
 
-private int[] convertRGBtoYCbCr(int r, int g, int b) {
+	private int[] convertRGBtoYCbCr(int r, int g, int b) {
 		
 		int[] ycbcr = new int[3];
 		
@@ -229,11 +229,7 @@ private int[] convertRGBtoYCbCr(int r, int g, int b) {
 		ycbcr[1] = (int) (-0.1687*r-0.3313*g+0.5*b+128 + 0.5);
 		ycbcr[2] = (int) (0.5*r-0.4187*g-0.0813*b+128 + 0.5);
 	
-	/*	ycbcr[0] =  16 + ((int) ( 65.738 * r + 129.057 * g + 25.064 * b  )) >> 8;
-		ycbcr[1] = 128 + ((int) (-37.945 * r + -74.494 * g + 112.439 * b  )) >> 8;
-        ycbcr[2] = 128 + ((int) (112.439 * r + -97.154 * g + -18.285 * b  )) >> 8;*/
-
-        for (int i=0; i<3; i++) {
+	    for (int i=0; i<3; i++) {
         	if (ycbcr[i] > 255)
         		ycbcr[i] = 255;
         	else if (ycbcr[i] < 0)
@@ -243,28 +239,21 @@ private int[] convertRGBtoYCbCr(int r, int g, int b) {
         return ycbcr;
 	}
 
-private int[] convertRGBtoYCbCr(Pixel p) {
-	return convertRGBtoYCbCr(p.getRed(),p.getGreen(),p.getBlue());
+	private int[] convertRGBtoYCbCr(Pixel p) {
+		return convertRGBtoYCbCr(p.getRed(),p.getGreen(),p.getBlue());
 	
-}
-
-private int[] convertYCbCrtoRGB(int[] ycbcr) {
-	return convertYCbCrtoRGB(ycbcr[0],ycbcr[1],ycbcr[2]);
-}
+	}
 	
-private int[] convertYCbCrtoRGB(int y, int cb, int cr) {
+	private int[] convertYCbCrtoRGB(int y, int cb, int cr) {
 		
-		int[] rgb = new int[3];
+		int[] rgb = new int[4];
 		
 		rgb[0] = (int) (y + 1.4*(cr-128) + 0.5);
 		rgb[1] = (int) (y - 0.343*(cb-128) - 0.711*(cr-128) + 0.5);
 		rgb[2] = (int) (y + 1.765*(cb-128) + 0.5);
+		rgb[3] = 255;
 		
-	/*	rgb[0] = ((int) (298.082*(y - 16) + 408.583*(cr - 128))) >> 8;
-    	rgb[1] = ((int) (298.082*(y - 16) - 100.291*(cb - 128) - 208.120 * (cr - 128))) >> 8;
-    	rgb[2] = ((int) (298.082*(y - 16) + 516.411*(cb - 128))) >> 8;*/
-
-    	for (int i=0; i<3; i++) {
+	   	for (int i=0; i<3; i++) {
     		if (rgb[i] > 255)
     			rgb[i] = 255;
     		else if (rgb[i] < 0)
@@ -272,5 +261,9 @@ private int[] convertYCbCrtoRGB(int y, int cb, int cr) {
     	}
 				
 		return rgb;
+	}
+
+	private int[] convertYCbCrtoRGB(int[] ycbcr) {
+		return convertYCbCrtoRGB(ycbcr[0],ycbcr[1],ycbcr[2]);
 	}
 }

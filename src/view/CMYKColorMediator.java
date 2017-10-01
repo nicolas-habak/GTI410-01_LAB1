@@ -111,11 +111,6 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		result.setPixel(pixel);
 	}
 	
-	private Pixel getPixelRGBA(){
-		int[] rgba = convertCMYKtoRGBA(cmyk);
-		return new Pixel(rgba[0], rgba[1], rgba[2], rgba[3]);
-	}
-	
 	public void computeImage(int index) {
 		Pixel p = new Pixel();
 		float[] cmyk = this.cmyk.clone();
@@ -144,9 +139,9 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 	/**
 	 * @return
 	 */
-	public BufferedImage getYellowImage() {
-		return images[YELLOW];
-	}
+	public BufferedImage getCyanImage() {
+		return images[CYAN];
+	}	
 
 	/**
 	 * @return
@@ -154,12 +149,12 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 	public BufferedImage getMagentaImage() {
 		return images[MAGENTA];
 	}
-
+	
 	/**
 	 * @return
 	 */
-	public BufferedImage getCyanImage() {
-		return images[CYAN];
+	public BufferedImage getYellowImage() {
+		return images[YELLOW];
 	}
 	
 	/**
@@ -227,6 +222,11 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 	 */
 	public double getBlack() {
 		return cmyk[3];
+	}
+	
+	private Pixel getPixelRGBA(){
+		int[] rgba = convertCMYKtoRGBA(cmyk);
+		return new Pixel(rgba[0], rgba[1], rgba[2], rgba[3]);
 	}
 
 

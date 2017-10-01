@@ -120,6 +120,11 @@ public class ColorDialog extends JDialog {
 		return panel;
 	}
 	
+	/*
+	 * 
+	 * Création du CMYK panel et ajout au menu. Initialisation du mediator. Ajustement des slider en valeurs de 0 à 255.
+	 * 
+	 * */
 	private JPanel createCMYKPanel(ColorDialogResult result, int imageWidths) {	
 
 		CMYKColorMediator cmykMediator;
@@ -146,6 +151,11 @@ public class ColorDialog extends JDialog {
 		return panel;
 	}
 	
+	/*
+	 * 
+	 * Création du YCbCr panel et ajout au menu. Initialisation du mediator.
+	 * 
+	 * */
 	private JPanel createYCbCrPanel(ColorDialogResult result, int imageWidths) {
 		
 		YCbCrColorMediator ycbcrMediator = new YCbCrColorMediator(result, imageWidths, 30);
@@ -168,6 +178,11 @@ public class ColorDialog extends JDialog {
 		return panel;
 	}
 	
+	/*
+	 * 
+	 * Création du HSV panel et ajout au menu. Initialisation du mediator. Ajustement des slider en valeurs de 0 à 255.
+	 * 
+	 * */
 	private JPanel createHSVPanel(ColorDialogResult result, int imageWidths) {	
 
 		HSVColorMediator hsvMediator = new HSVColorMediator(result, imageWidths, 30);
