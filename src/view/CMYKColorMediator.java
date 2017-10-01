@@ -23,6 +23,9 @@ import model.Pixel;
 
 class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 	
+	/*
+	 * Définition des index pour les arrays de couleurs dans la classe.
+	 * */	
 	private final int CYAN = 0;
 	private final int MAGENTA = 1;
 	private final int YELLOW = 2;
@@ -39,6 +42,10 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 	int imagesHeight;
 	ColorDialogResult result;
 	
+	
+	/*
+	 * Définition du mediator tel que dans le RGB Mediator. Conversion au format CMYK et initialisation du array.
+	 * */
 	CMYKColorMediator(ColorDialogResult result, int imagesWidth, int imagesHeight) {
 		this.imagesWidth = imagesWidth;
 		this.imagesHeight = imagesHeight;
@@ -61,6 +68,7 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 	
 	/*
 	 * @see View.SliderObserver#update(double)
+	 * Méthode similaire à RGB mais pour CMYK. Utilisation du computeImage() modifié.
 	 */
 	public void update(ColorSlider s, int v) {
 		float normalizedV = (float) v / 255.0f;
@@ -111,6 +119,10 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		result.setPixel(pixel);
 	}
 	
+	/*
+	 * Rassemblement des différentes méthodes de compute en une seule et utilisation des index de position pour traiter 
+	 * les différentes couleurs. Conversion de CMYK à RGB pour définir les couleurs sur les sliders.
+	 * */
 	public void computeImage(int index) {
 		Pixel p = new Pixel();
 		float[] cmyk = this.cmyk.clone();
@@ -224,6 +236,9 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		return cmyk[3];
 	}
 	
+	/*
+	 * Méthode pour faciliter la récupération de la couleur d'un pixel et retour d'un array contenant les valeurs RGB.
+	 * */
 	private Pixel getPixelRGBA(){
 		int[] rgba = convertCMYKtoRGBA(cmyk);
 		return new Pixel(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -255,6 +270,9 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		// harder to understand.
 	}
 	
+	/*
+	 * Méthode de conversion de RGB à CMYK en utilisant les valeurs int de RGB.
+	 * */
 	private float[] convertRGBAtoCMYK(int red, int green, int blue) {
 		float normalizedRed = (float) red / 255;
 		float normalizedGreen = (float) green / 255;
@@ -274,16 +292,25 @@ class CMYKColorMediator extends Object implements SliderObserver, ObserverIF {
 		return cmyk;
 	}
 	
+	/*
+	 * Méthode de conversion de RGB à CMYK en utilisant le pixel directement.
+	 * */
 	private float[] convertRGBAtoCMYK(Pixel p) {
 		return convertRGBAtoCMYK(p.getRed(), p.getGreen(), p.getBlue());
 	}
 	
+	/*
+	 * Méthode de conversion de CMYK à RGB en utilisant un array de valeurs.
+	 * */
 	private int[] convertCMYKtoRGBA(float[] cmyk) {
 		if(cmyk.length > 3)
 			return convertCMYKtoRGBA(cmyk[0], cmyk[1], cmyk[2], cmyk[3]);
 		return null;
 	}
 	
+	/*
+	 * Méthode de conversion de CMYK à RGB en utilisant les valeurs float de CMYK.
+	 * */
 	private int[] convertCMYKtoRGBA(float cyan, float magenta, float yellow, float black) {
 		int[] rgba = new int[4];
 		rgba[0] = (int) (255.0f * (1 - cyan) * (1 - black));

@@ -23,11 +23,15 @@ import model.Pixel;
 
 class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 	
+	/*
+	 * Définition des index pour les arrays de couleurs dans la classe.
+	 * */
 	private final int HUE = 0;
 	private final int SATURATION = 1;
 	private final int VALUE = 2;
 	
 	ColorSlider[] cs;
+	
 	float[] hsv;
 	
 	BufferedImage[] images;
@@ -36,19 +40,21 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 	int imagesHeight;
 	ColorDialogResult result;
 	
+	
+	/*
+	 * Définition du mediator tel que dans le RGB Mediator. Conversion au format HSV et initialisation du array.
+	 * */
 	HSVColorMediator(ColorDialogResult result, int imagesWidth, int imagesHeight) {
 		this.imagesWidth = imagesWidth;
 		this.imagesHeight = imagesHeight;
 
 		hsv = convertRGBAtoHSV(result.getPixel());
+		
 		images = new BufferedImage[3];
 		cs = new ColorSlider[3];
 		
 		this.result = result;
 		result.addObserver(this);
-		
-		//hsv = Color.RGBtoHSB(red, green, blue, null);
-		//int hue = (int) Math.round(360 * hsv[0]);
 		
 		for(int i = 0; i < images.length; i ++)
 		{
@@ -60,6 +66,7 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 	
 	/*
 	 * @see View.SliderObserver#update(double)
+	 * Méthode similaire à RGB mais pour HSV. Utilisation du computeImage() modifié.
 	 */
 	public void update(ColorSlider s, int v) {
 		float normalizedV = (float)v / 255;
@@ -96,12 +103,18 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 		result.setPixel(pixel);
 	}
 	
+	/*
+	 * Méthode pour faciliter la récupération de la couleur d'un pixel et retour d'un array contenant les valeurs RGB.
+	 * */
 	private Pixel getPixelRGBA(){
 		int[] rgba = convertHSVtoRGBA(hsv);
 		return new Pixel(rgba[0], rgba[1], rgba[2], rgba[3]);
 	}
 
-
+	/*
+	 * Rassemblement des différentes méthodes de compute en une seule et utilisation des index de position pour traiter 
+	 * les différentes couleurs. Conversion de HSV à RGB pour définir les couleurs sur les sliders.
+	 * */
 	public void computeImage(int index) {
 		Pixel p = new Pixel();
 		float[] hsv = this.hsv.clone();
@@ -147,6 +160,18 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 	public BufferedImage getValueImage() {
 		return images[VALUE];
 	}	
+	
+	public double getHue() {
+		return hsv[0];
+	}
+	
+	public double getSat() {
+		return hsv[1];
+	}
+	
+	public double getVal() {
+		return hsv[2];
+	}
 
 	/**
 	 * @param slider
@@ -171,23 +196,45 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 		cs[VALUE] = slider;
 		slider.addObserver(this);
 	}
-
-	public double getHue() {
-		return hsv[0];
+	
+	/* (non-Javadoc)
+	 * @see model.ObserverIF#update()
+	 */
+	public void update() {
+		// When updated with the new "result" color, if the "currentColor"
+		// is aready properly set, there is no need to recompute the images.
+		Pixel currentColor = getPixelRGBA();
+		if(currentColor.getARGB() == result.getPixel().getARGB()) return;
+		
+		hsv = convertRGBAtoHSV(result.getPixel());
+		
+		cs[HUE].setValue((int)(hsv[HUE] / 360 * 255));
+		cs[SATURATION].setValue((int)(255.0f * hsv[SATURATION]));
+		cs[VALUE].setValue((int)(255.0f * hsv[VALUE]));
+		
+		for(int i = 0; i < hsv.length; i++) {			
+			computeImage(i);
+		}
+		
+		// Efficiency issue: When the color is adjusted on a tab in the 
+		// user interface, the sliders color of the other tabs are recomputed,
+		// even though they are invisible. For an increased efficiency, the 
+		// other tabs (mediators) should be notified when there is a tab 
+		// change in the user interface. This solution was not implemented
+		// here since it would increase the complexity of the code, making it
+		// harder to understand.
 	}
 	
-	public double getSat() {
-		return hsv[1];
-	}
-	
-	public double getVal() {
-		return hsv[2];
-	}
-	
+	/*
+	 * Méthode de conversion de HSV à RGB en utilisant un array de valeurs.
+	 * */
 	private int[] convertHSVtoRGBA(float[] hsv) {
 		return convertHSVtoRGBA(hsv[0], hsv[1], hsv[2]);
 	}
 	
+	/*
+	 * Méthode de conversion de HSV à RGB en utilisant les valeurs float de HSV.
+	 * */
 	private int[] convertHSVtoRGBA(float h, float s, float v) {
 		float c = s * v;
 		float x = c * (1.0f - Math.abs((h / 60) % 2.0f - 1.0f));
@@ -212,6 +259,9 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 		return rgb;
 	}
 	
+	/*
+	 * Méthode de conversion de RGB à HSV en utilisant les valeurs int de RGB.
+	 * */
 	private float[] convertRGBAtoHSV(int[] rgb) {
 		float[] normRGB = new float[rgb.length];
 		float[] hsv = new float[3];
@@ -248,37 +298,11 @@ class HSVColorMediator extends Object implements SliderObserver, ObserverIF {
 		return hsv;
 	}
 	
+	/*
+	 * Méthode de conversion de RGB à HSV en utilisant le pixel directement.
+	 * */
 	private float[] convertRGBAtoHSV(Pixel p) {
 		return convertRGBAtoHSV(new int[] { p.getRed(), p.getGreen(), p.getBlue() });
 	}
-	
-	/* (non-Javadoc)
-	 * @see model.ObserverIF#update()
-	 */
-	public void update() {
-		// When updated with the new "result" color, if the "currentColor"
-		// is aready properly set, there is no need to recompute the images.
-		Pixel currentColor = getPixelRGBA();
-		if(currentColor.getARGB() == result.getPixel().getARGB()) return;
-		
-		hsv = convertRGBAtoHSV(result.getPixel());
-		
-		cs[HUE].setValue((int)(hsv[HUE] / 360 * 255));
-		cs[SATURATION].setValue((int)(255.0f * hsv[SATURATION]));
-		cs[VALUE].setValue((int)(255.0f * hsv[VALUE]));
-		
-		computeImage(HUE);
-		computeImage(SATURATION);
-		computeImage(VALUE);
-		
-		// Efficiency issue: When the color is adjusted on a tab in the 
-		// user interface, the sliders color of the other tabs are recomputed,
-		// even though they are invisible. For an increased efficiency, the 
-		// other tabs (mediators) should be notified when there is a tab 
-		// change in the user interface. This solution was not implemented
-		// here since it would increase the complexity of the code, making it
-		// harder to understand.
-	}
-
 }
 

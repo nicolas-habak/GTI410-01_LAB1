@@ -21,6 +21,10 @@ import model.ObserverIF;
 import model.Pixel;
 
 class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
+	
+	/*
+	 * Définition des index pour les arrays de couleurs dans la classe.
+	 * */
 	private final int Y = 0;
 	private final int CB = 1;
 	private final int CR = 2;
@@ -36,6 +40,10 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 	int imagesHeight;
 	ColorDialogResult result;
 	
+	
+	/*
+	 * Définition du mediator tel que dans le RGB Mediator. Conversion au format YCbCr et initialisation du array.
+	 * */
 	YCbCrColorMediator(ColorDialogResult result, int imagesWidth, int imagesHeight) {
 		this.imagesWidth = imagesWidth;
 		this.imagesHeight = imagesHeight;
@@ -47,22 +55,19 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		this.result = result;
 		result.addObserver(this);
 		
-		
-		images[Y] = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-		images[CB] = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-		images[CR] = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
-		
-		computeImage(Y);
-		computeImage(CB);
-		computeImage(CR);
+		for(int i = 0; i < images.length; i ++)
+		{
+			images[i] = new BufferedImage(imagesWidth, imagesHeight, BufferedImage.TYPE_INT_ARGB);
+			computeImage(i);
+		}		
 	}
 	
 	
 	/*
 	 * @see View.SliderObserver#update(double)
+	 * Méthode similaire à RGB mais pour YCbCr. Utilisation du computeImage() modifié.
 	 */
 	public void update(ColorSlider s, int v) {
-		//float normalizedV = (float) v / 255.0f;
 		boolean updateY = false;
 		boolean updateCb = false;
 		boolean updateCr = false;
@@ -97,11 +102,18 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		result.setPixel(pixel);
 	}
 	
+	/*
+	 * Méthode pour faciliter la récupération de la couleur d'un pixel et retour d'un array contenant les valeurs RGB.
+	 * */
 	private Pixel getPixelRGBA(){
 		int[] rgba = convertYCbCrtoRGB(ycbcr);
 		return new Pixel(rgba[0], rgba[1], rgba[2]);
 	}
 	
+	/*
+	 * Rassemblement des différentes méthodes de compute en une seule et utilisation des index de position pour traiter 
+	 * les différentes couleurs. Conversion de YCbCr à RGB pour définir les couleurs sur les sliders.
+	 * */
 	public void computeImage(int index) {
 		Pixel p = new Pixel();
 		int[] ycbcr = this.ycbcr.clone();
@@ -204,14 +216,11 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		
 		ycbcr = convertRGBtoYCbCr(result.getPixel());
 		
-		cs[Y].setValue(ycbcr[0]);
-		cs[CB].setValue(ycbcr[1]);
-		cs[CR].setValue(ycbcr[2]);
-		
-		computeImage(Y);
-		computeImage(CB);
-		computeImage(CR);
-		
+		for(int i = 0; i < ycbcr.length; i++) {
+			cs[i].setValue((int)(ycbcr[i]));
+			computeImage(i);
+		}
+				
 		// Efficiency issue: When the color is adjusted on a tab in the 
 		// user interface, the sliders color of the other tabs are recomputed,
 		// even though they are invisible. For an increased efficiency, the 
@@ -221,6 +230,9 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		// harder to understand.
 	}
 
+	/*
+	 * Méthode de conversion de RGB à YCbCr en utilisant les valeurs int de RGB.
+	 * */
 	private int[] convertRGBtoYCbCr(int r, int g, int b) {
 		
 		int[] ycbcr = new int[3];
@@ -239,11 +251,17 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
         return ycbcr;
 	}
 
+	/*
+	 * Méthode de conversion de RGB à YCbCr en utilisant le pixel directement.
+	 * */
 	private int[] convertRGBtoYCbCr(Pixel p) {
 		return convertRGBtoYCbCr(p.getRed(),p.getGreen(),p.getBlue());
 	
 	}
 	
+	/*
+	 * Méthode de conversion de YCbCr à RGB en utilisant les valeurs int de YCbCr.
+	 * */
 	private int[] convertYCbCrtoRGB(int y, int cb, int cr) {
 		
 		int[] rgb = new int[4];
@@ -263,6 +281,9 @@ class YCbCrColorMediator extends Object implements SliderObserver, ObserverIF {
 		return rgb;
 	}
 
+	/*
+	 * Méthode de conversion de YCbCr à RGB en utilisant un array de valeurs.
+	 * */
 	private int[] convertYCbCrtoRGB(int[] ycbcr) {
 		return convertYCbCrtoRGB(ycbcr[0],ycbcr[1],ycbcr[2]);
 	}
