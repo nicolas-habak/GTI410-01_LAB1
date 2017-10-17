@@ -30,7 +30,7 @@ import java.util.Stack;
  * @author unascribed
  * @version $Revision: 1.12 $
  */
-public class ImageLineFiller extends AbstractTransformer {
+public class ImageFiller extends AbstractTransformer {
 	private ImageX currentImage;
 	private int currentImageWidth;
 	private Pixel fillColor = new Pixel(0xFF00FFFF);
@@ -44,7 +44,7 @@ public class ImageLineFiller extends AbstractTransformer {
 	 * Creates an ImageLineFiller with default parameters.
 	 * Default pixel change color is black.
 	 */
-	public ImageLineFiller() {
+	public ImageFiller() {
 	}
 	
 	/* (non-Javadoc)
@@ -72,7 +72,7 @@ public class ImageLineFiller extends AbstractTransformer {
 				if (0 <= ptTransformed.x && ptTransformed.x < currentImage.getImageWidth() &&
 				    0 <= ptTransformed.y && ptTransformed.y < currentImage.getImageHeight()) {
 					currentImage.beginPixelUpdate();
-					horizontalLineFill(ptTransformed);
+					floodFill(ptTransformed);
 					currentImage.endPixelUpdate();											 	
 					return true;
 				}
@@ -84,7 +84,7 @@ public class ImageLineFiller extends AbstractTransformer {
 	/**
 	 * Horizontal line fill with specified color
 	 */
-	private void horizontalLineFill(Point ptClicked) {
+	private void floodFill(Point ptClicked) {
 		Stack stack = new Stack();
 		stack.push(ptClicked);
 		while (!stack.empty()) {
