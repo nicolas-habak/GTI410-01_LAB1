@@ -87,6 +87,7 @@ public class ImageFiller extends AbstractTransformer {
 	private void floodFill(Point ptClicked) {
 		Stack stack = new Stack();
 		stack.push(ptClicked);
+		
 		while (!stack.empty()) {
 			Point current = (Point)stack.pop();
 			if (0 <= current.x && current.x < currentImage.getImageWidth() && 0 <= current.y && current.y < currentImage.getImageHeight() 

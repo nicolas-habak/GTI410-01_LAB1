@@ -72,7 +72,8 @@ public class ImageLineFiller extends AbstractTransformer {
 				if (0 <= ptTransformed.x && ptTransformed.x < currentImage.getImageWidth() &&
 				    0 <= ptTransformed.y && ptTransformed.y < currentImage.getImageHeight()) {
 					currentImage.beginPixelUpdate();
-					horizontalLineFill(ptTransformed);
+					int colorGerme = currentImage.getPixelInt(ptTransformed.x, ptTransformed.y);
+					if(floodFill)floodFill(ptTransformed, colorGerme);
 					currentImage.endPixelUpdate();											 	
 					return true;
 				}
@@ -84,13 +85,13 @@ public class ImageLineFiller extends AbstractTransformer {
 	/**
 	 * Horizontal line fill with specified color
 	 */
-	private void horizontalLineFill(Point ptClicked) {
+	private void floodFill(Point ptClicked, int germe) {
 		Stack stack = new Stack();
 		stack.push(ptClicked);
 		while (!stack.empty()) {
 			Point current = (Point)stack.pop();
 			if (0 <= current.x && current.x < currentImage.getImageWidth() && 0 <= current.y && current.y < currentImage.getImageHeight() 
-					&& !currentImage.getPixel(current.x, current.y).equals(fillColor)) {
+					&& !currentImage.getPixel(current.x, current.y).equals(fillColor) && currentImage.getPixelInt(current.x, current.y) == germe) {
 				
 				currentImage.setPixel(current.x, current.y, fillColor);
 				
@@ -105,13 +106,6 @@ public class ImageLineFiller extends AbstractTransformer {
 				stack.push(nextDown);
 			}
 		}
-		// TODO EP In this method, we are creating many new Point instances. 
-		//      We could try to reuse as many as possible to be more efficient.
-		// TODO EP In this method, we could be creating many Point instances. 
-		//      At some point we can run out of memory. We could create a new point
-		//      class that uses shorts to cut the memory use.
-		// TODO EP In this method, we could test if a pixel needs to be filled before
-		//      adding it to the stack (to reduce memory needs and increase efficiency).
 	}
 	
 	/**
