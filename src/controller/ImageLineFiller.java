@@ -45,6 +45,7 @@ public class ImageLineFiller extends AbstractTransformer {
 	 * Default pixel change color is black.
 	 */
 	public ImageLineFiller() {
+		setFloodFill(true);
 	}
 	
 	/* (non-Javadoc)
@@ -73,7 +74,8 @@ public class ImageLineFiller extends AbstractTransformer {
 				    0 <= ptTransformed.y && ptTransformed.y < currentImage.getImageHeight()) {
 					currentImage.beginPixelUpdate();
 					int colorGerme = currentImage.getPixelInt(ptTransformed.x, ptTransformed.y);
-					if(floodFill)floodFill(ptTransformed, colorGerme);
+					if(floodFill)doFloodFill(ptTransformed, colorGerme);
+					if(!floodFill)doBorderFill(ptTransformed);
 					currentImage.endPixelUpdate();											 	
 					return true;
 				}
@@ -85,13 +87,36 @@ public class ImageLineFiller extends AbstractTransformer {
 	/**
 	 * Horizontal line fill with specified color
 	 */
-	private void floodFill(Point ptClicked, int germe) {
+	private void doFloodFill(Point ptClicked, int germe) {
 		Stack stack = new Stack();
 		stack.push(ptClicked);
 		while (!stack.empty()) {
 			Point current = (Point)stack.pop();
 			if (0 <= current.x && current.x < currentImage.getImageWidth() && 0 <= current.y && current.y < currentImage.getImageHeight() 
 					&& !currentImage.getPixel(current.x, current.y).equals(fillColor) && currentImage.getPixelInt(current.x, current.y) == germe) {
+				
+				currentImage.setPixel(current.x, current.y, fillColor);
+				
+				// Next points to fill.
+				Point nextLeft = new Point(current.x-1, current.y);
+				Point nextRight = new Point(current.x+1, current.y);
+				Point nextUp = new Point(current.x, current.y+1);
+				Point nextDown = new Point(current.x, current.y-1);
+				stack.push(nextLeft);
+				stack.push(nextRight);
+				stack.push(nextUp);
+				stack.push(nextDown);
+			}
+		}
+	}
+	
+	private void doBorderFill(Point ptClicked) {
+		Stack stack = new Stack();
+		stack.push(ptClicked);
+		while (!stack.empty()) {
+			Point current = (Point)stack.pop();
+			if (0 <= current.x && current.x < currentImage.getImageWidth() && 0 <= current.y && current.y < currentImage.getImageHeight() 
+					&& !currentImage.getPixel(current.x, current.y).equals(borderColor) && !currentImage.getPixel(current.x, current.y).equals(fillColor)) {
 				
 				currentImage.setPixel(current.x, current.y, fillColor);
 				
