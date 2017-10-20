@@ -92,7 +92,8 @@ public class ImageLineFiller extends AbstractTransformer {
 		Pixel pGerme = new Pixel(germe);
 		float[] hsvGerme = convertRGBAtoHSV(pGerme);
 		float[] hsvThresholds = new float[] { getHueThreshold(), getSaturationThreshold(), getValueThreshold() };
-		float[] hsvMaxThresholds = new float[] { 180.0f, 255.0f, 255.0f };
+		float[] hsvMaxThresholdSliders = new float[] { 180.0f, 255.0f, 255.0f };
+		float[] hsvMaxThresholdHSV = new float[] { 360.0f, 1.0f, 1.0f };
 		
 		Stack stack = new Stack();
 		stack.push(ptClicked);
@@ -106,7 +107,16 @@ public class ImageLineFiller extends AbstractTransformer {
 				boolean inRange = true;
 				
 				for(int i = 0; i < hsvGerme.length && inRange; i++) {
-					inRange = hsvPixel[i] <= hsvGerme[i] * (1 + hsvThresholds[i] / hsvMaxThresholds[i]) && hsvPixel[i] >= hsvGerme[i] * (1 - hsvThresholds[i] / hsvMaxThresholds[i]);
+					float hsvBorneInf = hsvGerme[i] - hsvThresholds[i];
+					float hsvBorneSup = hsvGerme[i] + hsvThresholds[i];
+					
+					if(i == 0){
+						if(hsvPixel[i] > 180) {
+							hsvPixel[i] -= 180;
+						}
+					}
+					
+					inRange = hsvPixel[i] <= hsvBorneSup && hsvPixel[i] >= hsvBorneInf;
 				}
 				
 				if(inRange){
