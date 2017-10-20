@@ -88,24 +88,40 @@ public class ImageLineFiller extends AbstractTransformer {
 	 * Horizontal line fill with specified color
 	 */
 	private void doFloodFill(Point ptClicked, int germe) {
+
+		Pixel pGerme = new Pixel(germe);
+		float[] hsvGerme = convertRGBAtoHSV(pGerme);
+		float[] hsvThresholds = new float[] { getHueThreshold(), getSaturationThreshold(), getValueThreshold() };
+		float[] hsvMaxThresholds = new float[] { 180.0f, 255.0f, 255.0f };
+		
 		Stack stack = new Stack();
 		stack.push(ptClicked);
 		while (!stack.empty()) {
 			Point current = (Point)stack.pop();
 			if (0 <= current.x && current.x < currentImage.getImageWidth() && 0 <= current.y && current.y < currentImage.getImageHeight() 
-					&& !currentImage.getPixel(current.x, current.y).equals(fillColor) && currentImage.getPixelInt(current.x, current.y) == germe) {
+					&& !currentImage.getPixel(current.x, current.y).equals(fillColor)) {
+				Pixel p = new Pixel(currentImage.getPixelInt(current.x, current.y));
+				float[] hsvPixel = convertRGBAtoHSV(p);
 				
-				currentImage.setPixel(current.x, current.y, fillColor);
+				boolean inRange = true;
 				
-				// Next points to fill.
-				Point nextLeft = new Point(current.x-1, current.y);
-				Point nextRight = new Point(current.x+1, current.y);
-				Point nextUp = new Point(current.x, current.y+1);
-				Point nextDown = new Point(current.x, current.y-1);
-				stack.push(nextLeft);
-				stack.push(nextRight);
-				stack.push(nextUp);
-				stack.push(nextDown);
+				for(int i = 0; i < hsvGerme.length && inRange; i++) {
+					inRange = hsvPixel[i] <= hsvGerme[i] * (1 + hsvThresholds[i] / hsvMaxThresholds[i]) && hsvPixel[i] >= hsvGerme[i] * (1 - hsvThresholds[i] / hsvMaxThresholds[i]);
+				}
+				
+				if(inRange){
+					currentImage.setPixel(current.x, current.y, fillColor);
+					
+					// Next points to fill.
+					Point nextLeft = new Point(current.x-1, current.y);
+					Point nextRight = new Point(current.x+1, current.y);
+					Point nextUp = new Point(current.x, current.y+1);
+					Point nextDown = new Point(current.x, current.y-1);
+					stack.push(nextLeft);
+					stack.push(nextRight);
+					stack.push(nextUp);
+					stack.push(nextDown);
+				}
 			}
 		}
 	}
@@ -226,4 +242,42 @@ public class ImageLineFiller extends AbstractTransformer {
 		System.out.println("new Value Threshold " + i);
 	}
 
+	private float[] convertRGBAtoHSV(int[] rgb) {
+		float[] normRGB = new float[rgb.length];
+		float[] hsv = new float[3];
+		
+		for(int i = 0; i < rgb.length; i++) {
+			normRGB[i] = (float)rgb[i] / 255;
+		}
+		
+		float cmax = Math.max(Math.max(normRGB[0], normRGB[1]), normRGB[2]);
+		float cmin = Math.min(Math.min(normRGB[0], normRGB[1]), normRGB[2]);
+		float delta = cmax - cmin;
+		
+		if (delta == 0)
+			hsv[0] = 0;
+		else if (cmax == normRGB[0])
+			hsv[0] = 60.0f * (((normRGB[1] - normRGB[2]) / delta) % 60);
+		else if (cmax == normRGB[1])
+			hsv[0] = 60.0f * ((normRGB[2] - normRGB[0]) / delta + 2);
+		else
+			hsv[0] = 60.0f * ((normRGB[0] - normRGB[1]) / delta + 4);
+		
+		if(hsv[0] < 0)
+			hsv[0] += 360;
+		else if (hsv[0] > 360)
+			hsv[0] -= 360;
+		
+		if(cmax == 0)
+			hsv[1] = 0;
+		else
+			hsv[1] = delta / cmax;
+		
+		hsv[2] = cmax;
+		
+		return hsv;
+	}
+	private float[] convertRGBAtoHSV(Pixel p) {
+		return convertRGBAtoHSV(new int[] { p.getRed(), p.getGreen(), p.getBlue() });
+	}
 }
