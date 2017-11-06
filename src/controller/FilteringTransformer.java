@@ -31,18 +31,20 @@ import model.Shape;
  * @version $Revision: 1.6 $
  */
 public class FilteringTransformer extends AbstractTransformer{
-	Filter filter = new CustomFilter3x3(new PaddingZeroStrategy(), new ImageClampStrategy());
+	CustomFilter3x3 filter = new CustomFilter3x3(new PaddingZeroStrategy(), new ImageClampStrategy());
+	double matrix[][] = new double[3][3];
 	
 	/**
 	 * @param _coordinates
 	 * @param _value
 	 */
 	public void updateKernel(Coordinates _coordinates, float _value) {
-		System.out.println("[" + (_coordinates.getColumn() - 1) + "]["
-                                   + (_coordinates.getRow() - 1) + "] = " 
-                                   + _value);
+		//System.out.println("[" + (_coordinates.getColumn() - 1) + "][" + (_coordinates.getRow() - 1) + "] = " + _value);
+		
+		matrix[_coordinates.getColumn() - 1][_coordinates.getRow() - 1] = _value;
 		
 		
+		filter.setFilterMatrix(matrix);		
 	}
 		
 	/**
