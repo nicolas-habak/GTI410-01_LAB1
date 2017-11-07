@@ -160,33 +160,33 @@ public class FilterKernelPanel extends JPanel implements ObserverIF {
 		switch (index) {
 			case 1: // Mean filter
 			{
-				float meanKernel[][] = {{1, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{1/9f, 1/9f, 1/9f},
+										{1/9f, 1/9f, 1/9f},
+										{1/9f, 1/9f, 1/9f}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
 			case 2: // Gaussian filter
 			{
-				float meanKernel[][] = {{2, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{1/16f, 2/16f, 1/16f},
+										{2/16f, 4/16f, 2/16f},
+										{1/16f, 2/16f, 1/16f}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
 			case 3: // 4-Neighbour Laplacian
 			{
-				float meanKernel[][] = {{3, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{0f, -1f, 0f},
+										{-1f, 4f, -1f},
+										{0f, -1f, 0f}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
 			case 4: // 8-Neighbour Laplacian
 			{
-				float meanKernel[][] = {{4, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{-1f, -1f, -1f},
+										{-1f, 8f, -1f},
+										{-1f, -1f, -1f}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
@@ -208,17 +208,17 @@ public class FilterKernelPanel extends JPanel implements ObserverIF {
 			break;
 			case 7: // Sobel Horiz 
 			{
-				float meanKernel[][] = {{7, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{-1f, -2f, -1f},
+										{0f, 0f, 0f},
+										{1f, 2f, 1f}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
 			case 8: // Sobel Vert
 			{
-				float meanKernel[][] = {{8, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{-1f, 0f, 1f},
+										{-2f, 0f, 2f},
+										{-1f, 0f, 1f}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
