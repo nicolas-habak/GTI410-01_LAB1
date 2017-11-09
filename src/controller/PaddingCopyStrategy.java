@@ -25,9 +25,6 @@ import model.*;
  * @version $Revision: 1.4 $
  */
 public class PaddingCopyStrategy extends PaddingStrategy {
-	Pixel zeroPixel = new Pixel(0,0,0,0);
-	PixelDouble zeroPixelDouble = new PixelDouble(0,0,0,0);
-	
 	PaddingCopyStrategy(){
 		System.out.println("dans le copy padding");
 	}
@@ -41,12 +38,37 @@ public class PaddingCopyStrategy extends PaddingStrategy {
 	 * @return the validated Pixel value at the specified coordinates 
 	 */
 	public Pixel pixelAt(ImageX image, int x, int y) {
-		if ((x > 0) && (x < image.getImageWidth()) &&
-			(y > 0) && (y < image.getImageHeight())) {
-			return image.getPixel(x, y);
-		} else {
-			return zeroPixel;
+		Pixel copy = null;
+		
+		if ((x > 0) && (x < image.getImageWidth()) && (y > 0) && (y < image.getImageHeight())) {
+				copy = image.getPixel(x, y);
 		}
+		else {
+			if(x<=0) {
+				if(y<=0) {
+					copy = image.getPixel(1, 1);
+				}
+				else if(y>=image.getImageHeight()) {
+					copy = image.getPixel(1, image.getImageHeight()-1);
+				}
+				else {
+					copy = image.getPixel(1, y);
+				}			
+			}
+			else if(x>=image.getImageWidth()) {
+				if(y<=0) {
+					copy = image.getPixel(image.getImageWidth()-1, 1);
+				}
+				else if(y>=image.getImageHeight()) {
+					copy = image.getPixel(image.getImageWidth()-1, image.getImageHeight()-1);
+				}
+				else {
+					copy = image.getPixel(image.getImageWidth()-1, y);
+				}
+			}
+		}		
+		
+		return copy;		
 	}
 
 	/**
@@ -59,13 +81,36 @@ public class PaddingCopyStrategy extends PaddingStrategy {
 	 * @return the validated PixelDouble value at the specified coordinates
 	 */	
 	public PixelDouble pixelAt(ImageDouble image, int x, int y) {
-		PixelDouble pixel = null;
+		PixelDouble copy = null;
 		
-		if ((x >= 0) && (x < image.getImageWidth()) &&
-			(y >= 0) && (y < image.getImageHeight())) {
-			return image.getPixel(x, y);
-		} else {
-			return zeroPixelDouble;
+		if ((x > 0) && (x < image.getImageWidth()) && (y > 0) && (y <= image.getImageHeight())) {
+			copy = image.getPixel(x, y);
+	}
+	else {
+		if(x<0) {
+			if(y<0) {
+				copy = image.getPixel(1, 1);
+			}
+			else if(y>image.getImageHeight()) {
+				copy = image.getPixel(1, image.getImageHeight()-1);
+			}
+			else {
+				copy = image.getPixel(1, y);
+			}			
 		}
+		else if(x>image.getImageWidth()) {
+			if(y<0) {
+				copy = image.getPixel(image.getImageWidth()-1, 1);
+			}
+			else if(y>image.getImageHeight()) {
+				copy = image.getPixel(image.getImageWidth()-1, image.getImageHeight()-1);
+			}
+			else {
+				copy = image.getPixel(image.getImageWidth()-1, y);
+			}
+		}
+	}		
+	
+		return copy;		
 	}
 }
