@@ -83,33 +83,33 @@ public class PaddingCopyStrategy extends PaddingStrategy {
 	public PixelDouble pixelAt(ImageDouble image, int x, int y) {
 		PixelDouble copy = null;
 		
-		if ((x > 0) && (x < image.getImageWidth()) && (y > 0) && (y <= image.getImageHeight())) {
+		if ((x > 0) && (x < image.getImageWidth()) && (y > 0) && (y < image.getImageHeight())) {
 			copy = image.getPixel(x, y);
 	}
 	else {
-		if(x<0) {
-			if(y<0) {
+		if(x<=0) {
+			if(y<=0) {
 				copy = image.getPixel(1, 1);
 			}
-			else if(y>image.getImageHeight()) {
+			else if(y>=image.getImageHeight()) {
 				copy = image.getPixel(1, image.getImageHeight()-1);
 			}
 			else {
 				copy = image.getPixel(1, y);
 			}			
 		}
-		else if(x>image.getImageWidth()) {
-			if(y<0) {
+		else if(x>=image.getImageWidth()) {
+			if(y<=0) {
 				copy = image.getPixel(image.getImageWidth()-1, 1);
 			}
-			else if(y>image.getImageHeight()) {
+			else if(y>=image.getImageHeight()) {
 				copy = image.getPixel(image.getImageWidth()-1, image.getImageHeight()-1);
 			}
 			else {
 				copy = image.getPixel(image.getImageWidth()-1, y);
 			}
 		}
-	}		
+	}	
 	
 		return copy;		
 	}

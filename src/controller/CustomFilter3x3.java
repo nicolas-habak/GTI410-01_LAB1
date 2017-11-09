@@ -116,13 +116,9 @@ public class CustomFilter3x3 extends Filter {
 				// RED
 				for (int i = 0; i <= 2; i++) {
 					for (int j = 0; j <= 2; j++) {
-						
-						try{result += filterMatrix[i][j] * getPaddingStrategy().pixelAt(image, 
+						result += filterMatrix[i][j] * getPaddingStrategy().pixelAt(image, 
 																				    x+(i-1), 
-																				    y+(j-1)).getRed();}
-						catch(Exception e) {
-							System.out.println(" red x:" + x + " y:" + y);
-						}
+																				    y+(j-1)).getRed();
 					}
 				}
 				
@@ -133,12 +129,9 @@ public class CustomFilter3x3 extends Filter {
 				// Green
 				for (int i = 0; i <= 2; i++) {
 					for (int j = 0; j <= 2; j++) {
-						try{result += filterMatrix[i][j] * getPaddingStrategy().pixelAt(image, 
+						result += filterMatrix[i][j] * getPaddingStrategy().pixelAt(image, 
 																					x+(i-1), 
-																					y+(j-1)).getGreen();}
-						catch(Exception e) {
-							System.out.println("green x:" + x + " y:" + y);
-						}
+																					y+(j-1)).getGreen();
 					}
 				}
 				
@@ -149,12 +142,9 @@ public class CustomFilter3x3 extends Filter {
 				// Blue
 				for (int i = 0; i <= 2; i++) {
 					for (int j = 0; j <= 2; j++) {
-						try{result += filterMatrix[i][j] * getPaddingStrategy().pixelAt(image,
+						result += filterMatrix[i][j] * getPaddingStrategy().pixelAt(image,
 																					x+(i-1), 
-																					y+(j-1)).getBlue();}
-						catch(Exception e) {
-							System.out.println("blue x:" + x + " y:" + y);
-						}
+																					y+(j-1)).getBlue();
 					}
 				}
 				
@@ -163,10 +153,7 @@ public class CustomFilter3x3 extends Filter {
 							
 				//*******************************
 				// Alpha - Untouched in this filter
-				try{newPixel.setAlpha(getPaddingStrategy().pixelAt(image, x,y).getAlpha());}
-				catch(Exception e) {
-					System.out.println("alpha x:" + x + " y:" + y);
-				}
+				newPixel.setAlpha(getPaddingStrategy().pixelAt(image, x,y).getAlpha());
 							 
 				//*******************************
 				// Done
