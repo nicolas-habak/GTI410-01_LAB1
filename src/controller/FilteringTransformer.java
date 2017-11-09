@@ -82,7 +82,19 @@ public class FilteringTransformer extends AbstractTransformer{
 	 * @param string
 	 */
 	public void setBorder(String string) {
-		System.out.println(string);
+		//System.out.println(string);
+		
+		PaddingStrategy ps = null;
+		
+		switch(string.trim().toLowerCase()) {
+		case "0":System.out.println("zone 0");ps = new PaddingZeroStrategy();break;
+		case "none":System.out.println("zone none");break;
+		case "copy":System.out.println("zone copy");ps = new PaddingCopyStrategy();break;
+		case "mirror":System.out.println("zone mirror");break;
+		case "circular":System.out.println("zone circular");break;		
+		}
+		
+		filter = new CustomFilter3x3(ps, new ImageClampStrategy());
 	}
 
 	/**

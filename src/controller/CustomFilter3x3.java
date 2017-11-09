@@ -44,16 +44,6 @@ public class CustomFilter3x3 extends Filter {
 	
 	public void setFilterMatrix(double[][] matrix) {
 				
-		/*System.out.println("[0][0]"+matrix[0][0]);
-		System.out.println("[1][0]"+matrix[1][0]);
-		System.out.println("[2][0]"+matrix[2][0]);
-		System.out.println("[0][1]"+matrix[0][1]);
-		System.out.println("[1][1]"+matrix[1][1]);
-		System.out.println("[2][1]"+matrix[2][1]);
-		System.out.println("[0][2]"+matrix[0][2]);
-		System.out.println("[1][2]"+matrix[1][2]);
-		System.out.println("[2][2]"+matrix[2][2]);*/
-		
 		filterMatrix[0][0] = matrix[0][0];
 		filterMatrix[1][0] = matrix[1][0];
 		filterMatrix[2][0] = matrix[2][0];
