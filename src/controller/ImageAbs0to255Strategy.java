@@ -69,7 +69,7 @@ public class ImageAbs0to255Strategy extends ImageConversionStrategy {
 	
 	private double correct(double value, double min, double max) {
 		if(min < 0 || max > 255) {
-			if(max - min < 255) {
+			if(max - min <= 255) {
 				if(min < 0) {
 					value -= min;
 				} else if (max > 255){
