@@ -192,17 +192,17 @@ public class FilterKernelPanel extends JPanel implements ObserverIF {
 			break;
 			case 5: // Prewitt Horiz
 			{
-				float meanKernel[][] = {{5, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{0, 0, 0},
+										{0, 0, 0},
+										{0, 0, 0}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
 			case 6: // Prewitt Vert
 			{
-				float meanKernel[][] = {{6, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{0, 0, 0},
+										{0, 0, 0},
+										{0, 0, 0}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
@@ -224,17 +224,17 @@ public class FilterKernelPanel extends JPanel implements ObserverIF {
 			break;
 			case 9: // Roberts 45 degrees
 			{
-				float meanKernel[][] = {{9, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{0, 0, 0},
+										{0, 0, 0},
+										{0, 0, 0}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
 			case 10: // Roberts -45 degrees
 			{
-				float meanKernel[][] = {{10, 2, 3},
-										{4, 5, 6},
-										{7, 8, 9}};
+				float meanKernel[][] = {{0, 0, 0},
+										{0, 0, 0},
+										{0, 0, 0}};
 				_kernelPanel.setKernelValues(meanKernel);
 			} 
 			break;
