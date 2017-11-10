@@ -90,7 +90,7 @@ public class FilteringTransformer extends AbstractTransformer{
 		case "0":System.out.println("zone 0");ps = new PaddingZeroStrategy();break;
 		case "none":System.out.println("zone none");break;
 		case "copy":System.out.println("zone copy");ps = new PaddingCopyStrategy();break;
-		case "mirror":System.out.println("zone mirror");break;
+		case "mirror":System.out.println("zone mirror");ps = new PaddingMirrorStrategy();break;
 		case "circular":System.out.println("zone circular");break;		
 		}
 		
