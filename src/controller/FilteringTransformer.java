@@ -31,7 +31,9 @@ import model.Shape;
  * @version $Revision: 1.6 $
  */
 public class FilteringTransformer extends AbstractTransformer{
-	CustomFilter3x3 filter = new CustomFilter3x3(new PaddingZeroStrategy(), new ImageClampStrategy());
+	PaddingStrategy ps = new PaddingZeroStrategy();
+	ImageConversionStrategy ics = new ImageClampStrategy();
+	CustomFilter3x3 filter = new CustomFilter3x3(ps, ics);
 	double matrix[][] = new double[3][3];
 	
 	/**
@@ -81,9 +83,6 @@ public class FilteringTransformer extends AbstractTransformer{
 	 */
 	public void setBorder(String string) {
 		//System.out.println(string);
-		
-		PaddingStrategy ps = null;
-		
 		switch(string.trim().toLowerCase()) {
 		case "0":System.out.println("zone 0");ps = new PaddingZeroStrategy();break;
 		case "none":System.out.println("zone none");break;
@@ -92,7 +91,7 @@ public class FilteringTransformer extends AbstractTransformer{
 		case "circular":System.out.println("zone circular");break;		
 		}
 		
-		filter = new CustomFilter3x3(ps, new ImageClampStrategy());
+		filter = new CustomFilter3x3(ps, ics);
 	}
 
 	/**
@@ -100,5 +99,14 @@ public class FilteringTransformer extends AbstractTransformer{
 	 */
 	public void setClamp(String string) {
 		System.out.println(string);
+		
+		switch(string.trim().toLowerCase()) {
+		case "clamp 0...255":ics = new ImageClampStrategy();break;
+		case "abs and normalize to 255":break;
+		case "abs and normalize 0 to 255":ics = new ImageAbs0to255Strategy();break;
+		case "normalize 0 to 255":break;		
+		}
+		
+		filter = new CustomFilter3x3(ps, ics);
 	}
 }
