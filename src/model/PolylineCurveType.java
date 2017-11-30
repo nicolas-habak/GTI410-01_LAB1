@@ -48,8 +48,7 @@ public class PolylineCurveType extends CurveType {
 	/* (non-Javadoc)
 	 * @see model.CurveType#getControlPoint(int, int)
 	 */
-	public ControlPoint getControlPoint(List controlPoints, 
-	                                    int segmentNumber, int controlPointNumber) {
+	public ControlPoint getControlPoint(List controlPoints, int segmentNumber, int controlPointNumber) {
 	    int controlPointIndex = segmentNumber + controlPointNumber;
 	    return (ControlPoint)controlPoints.get(controlPointIndex);
 	}

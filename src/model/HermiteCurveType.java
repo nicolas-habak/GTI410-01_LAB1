@@ -53,10 +53,7 @@ public class HermiteCurveType extends CurveType {
 	/* (non-Javadoc)
 	 * @see model.CurveType#getControlPoint(java.util.List, int, int)
 	 */
-	public ControlPoint getControlPoint(
-		List controlPoints,
-		int segmentNumber,
-		int controlPointNumber) {
+	public ControlPoint getControlPoint(List controlPoints, int segmentNumber, int controlPointNumber) {
 		int controlPointIndex = segmentNumber * 3 + controlPointNumber;
 		return (ControlPoint)controlPoints.get(controlPointIndex);
 	}
@@ -66,19 +63,25 @@ public class HermiteCurveType extends CurveType {
 	 */
 	public Point evalCurveAt(List controlPoints, double t) {
 		List tVector = Matrix.buildRowVector4(t*t*t, t*t, t, 1);
-		List gVector = Matrix.buildColumnVector4(((ControlPoint)controlPoints.get(0)).getCenter(), 
-			((ControlPoint)controlPoints.get(1)).getCenter(), 
-			((ControlPoint)controlPoints.get(2)).getCenter(),
-			((ControlPoint)controlPoints.get(3)).getCenter());
+		
+		Point p1 = ((ControlPoint)controlPoints.get(0)).getCenter();
+		Point p2 = ((ControlPoint)controlPoints.get(1)).getCenter();
+		Point p3 = ((ControlPoint)controlPoints.get(2)).getCenter();
+		Point p4 = ((ControlPoint)controlPoints.get(3)).getCenter();
+		
+		Point r1 = (new ControlPoint(p2.getX()-p1.getX(),p2.getY()-p1.getY())).getCenter();
+		Point r4 = (new ControlPoint(p4.getX()-p3.getX(),p4.getY()-p3.getY())).getCenter();
+		
+		List gVector = Matrix.buildColumnVector4(p1,p4,r1,r4);
 		Point p = Matrix.eval(tVector, matrix, gVector);
 		return p;
 	}
 
-	private List bezierMatrix = 
-		Matrix.buildMatrix4(-1,  3, -3, 1, 
-							 3, -6,  3, 0, 
-							-3,  3,  0, 0, 
-							 1,  0,  0, 0);
+	private List HermiteMatrix = 
+		Matrix.buildMatrix4(2, -2, 1, 1, 
+							-3, 3, -2, -1, 
+							 0, 0, 1, 0, 
+							 1, 0, 0, 0);
 							 
-	private List matrix = bezierMatrix;
+	private List matrix = HermiteMatrix;
 }
