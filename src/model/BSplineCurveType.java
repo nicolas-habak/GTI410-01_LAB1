@@ -65,20 +65,35 @@ public class BSplineCurveType extends CurveType {
 	 * @see model.CurveType#evalCurveAt(java.util.List, double)
 	 */
 	public Point evalCurveAt(List controlPoints, double t) {
+		
+		System.out.println();
+		System.out.println("t: " + t);
+		System.out.println("=========");
+		
+		for(int i = 0; i < controlPoints.size() ; i++) {
+			Point p = ((ControlPoint)controlPoints.get(0)).getCenter();
+			System.out.println("P" + i + ": " + p.getX() + ", " + p.getY());
+		}
+		
+		System.out.println("=========");
+		
 		List tVector = Matrix.buildRowVector4(t*t*t, t*t, t, 1);
 		List gVector = Matrix.buildColumnVector4(((ControlPoint)controlPoints.get(0)).getCenter(), 
 			((ControlPoint)controlPoints.get(1)).getCenter(), 
 			((ControlPoint)controlPoints.get(2)).getCenter(),
 			((ControlPoint)controlPoints.get(3)).getCenter());
+		
 		Point p = Matrix.eval(tVector, matrix, gVector);
+		p.setLocation(p.getX(), p.getY());
+		
 		return p;
 	}
 
-	private List bezierMatrix = 
-		Matrix.buildMatrix4(-1,  3, -3, 1, 
-							 3, -6,  3, 0, 
-							-3,  3,  0, 0, 
-							 1,  0,  0, 0);
+	private List bSplineMatrix = 
+		Matrix.buildMatrix4(-1.0f / 6.0f,  3.0f / 6.0f, -3.0f / 6.0f, 1.0f / 6.0f, 
+							 3.0f / 6.0f, -6.0f / 6.0f,  3.0f / 6.0f, 0.0f / 6.0f, 
+							-3.0f / 6.0f,  0.0f / 6.0f,  3.0f / 6.0f, 0.0f / 6.0f, 
+							 1.0f / 6.0f,  4.0f / 6.0f,  1.0f / 6.0f, 0.0f / 6.0f);
 							 
-	private List matrix = bezierMatrix;
+	private List matrix = bSplineMatrix;
 }
