@@ -73,7 +73,45 @@ public class BSplineCurveType extends CurveType {
 			((ControlPoint)controlPoints.get(3)).getCenter());
 		
 		Point p = Matrix.eval(tVector, matrix, gVector);
+		
+		/* L'algorithme pour Matrix.eval est basé sur celui-ci mais était fourni dans l'application
+		
+		Point p = new Point();
+		List T = Matrix.buildRowVector4(t*t*t, t*t, t, 1);
+		List Gs = Matrix.buildColumnVector4(((ControlPoint)controlPoints.get(0)).getCenter(), 
+				((ControlPoint)controlPoints.get(1)).getCenter(), 
+				((ControlPoint)controlPoints.get(2)).getCenter(),
+				((ControlPoint)controlPoints.get(3)).getCenter());
+		
+		List Bs = Matrix.buildRowVector4(0, 0, 0, 0);
+		
+		for(int i = 0; i < ((List)Bs.get(0)).size(); i++) {
+			for(int j = 0; j < matrix.size(); j++) {
+				double Bsi = ((Double)((List)Bs.get(0)).get(i)).doubleValue();
+				Bsi += ((Double)((List)T.get(0)).get(j)).doubleValue() * ((Double)((List)matrix.get(j)).get(i)).doubleValue();
+				((List)Bs.get(0)).set(i, Bsi);
+			}
+			double Bsi = ((Double)((List)Bs.get(0)).get(i)).doubleValue();
+			Bsi /= 6.0f;
+			((List)Bs.get(0)).set(i, Bsi);
+		}
+		double x = 0, y = 0;
+		for(int i = 0; i < ((List)Bs.get(0)).size(); i++) {
+			x += ((Double)((List)Bs.get(0)).get(i)).doubleValue() * ((Point)((List)Gs.get(i)).get(0)).x;
+			y += ((Double)((List)Bs.get(0)).get(i)).doubleValue() * ((Point)((List)Gs.get(i)).get(0)).y;
+		}
+		
+		
+		p.setLocation(x, y);
+		*/
+		
+		/* il faut diviser par 6 car la matrice de coefficients est
+		 1/6 * -1.0f,  3.0f, -3.0f, 1.0f, 
+				3.0f, -6.0f,  3.0f, 0.0f, 
+			   -3.0f,  0.0f,  3.0f, 0.0f, 
+				1.0f,  4.0f,  1.0f, 0.0f */
 		p.setLocation(p.getX() / 6, p.getY() / 6);
+		
 		return p;
 	}
 
