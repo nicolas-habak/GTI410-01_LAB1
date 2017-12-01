@@ -69,11 +69,12 @@ public class HermiteCurveType extends CurveType {
 		Point p3 = ((ControlPoint)controlPoints.get(2)).getCenter();
 		Point p4 = ((ControlPoint)controlPoints.get(3)).getCenter();
 		
-		Point r1 = (new ControlPoint(p2.getX()-p1.getX(),p2.getY()-p1.getY())).getCenter();
-		Point r4 = (new ControlPoint(p4.getX()-p3.getX(),p4.getY()-p3.getY())).getCenter();
+		Point r1 = (new ControlPoint((p2.getX()-p1.getX()),(p2.getY()-p1.getY()))).getCenter();
+		Point r4 = (new ControlPoint((p3.getX()-p4.getX()),(p3.getY()-p4.getY()))).getCenter();
 		
 		List gVector = Matrix.buildColumnVector4(p1,p4,r1,r4);
 		Point p = Matrix.eval(tVector, matrix, gVector);
+					
 		return p;
 	}
 
