@@ -100,6 +100,7 @@ public class Curves extends AbstractTransformer implements DocObserver {
 
 	/**
 	 * @param string
+	 * Ajout des deux types de courbe supplémentaire
 	 */
 	public void setCurveType(String string) {
 		if (string == CurvesModel.BEZIER) {

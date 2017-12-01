@@ -60,6 +60,8 @@ public class HermiteCurveType extends CurveType {
 
 	/* (non-Javadoc)
 	 * @see model.CurveType#evalCurveAt(java.util.List, double)
+	 * Récupération des points dans la fenêtre et calcul des tangentes à l'aide des points
+	 * 
 	 */
 	public Point evalCurveAt(List controlPoints, double t) {
 		List tVector = Matrix.buildRowVector4(t*t*t, t*t, t, 1);
@@ -78,6 +80,7 @@ public class HermiteCurveType extends CurveType {
 		return p;
 	}
 
+	//Modification de la matrice pour respecter la matrice de l'Hermite
 	private List HermiteMatrix = 
 		Matrix.buildMatrix4(2, -2, 1, 1, 
 							-3, 3, -2, -1, 
