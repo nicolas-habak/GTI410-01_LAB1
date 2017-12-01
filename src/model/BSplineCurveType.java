@@ -16,6 +16,7 @@
 package model;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class BSplineCurveType extends CurveType {
 	 */
 	public int getNumberOfSegments(int numberOfControlPoints) {
 		if (numberOfControlPoints >= 4) {
-			return (numberOfControlPoints - 1) / 3;
+			return numberOfControlPoints - 3;
 		} else {
 			return 0;
 		}
@@ -57,7 +58,7 @@ public class BSplineCurveType extends CurveType {
 		List controlPoints,
 		int segmentNumber,
 		int controlPointNumber) {
-		int controlPointIndex = segmentNumber * 3 + controlPointNumber;
+		int controlPointIndex = segmentNumber + controlPointNumber;
 		return (ControlPoint)controlPoints.get(controlPointIndex);
 	}
 
@@ -65,18 +66,6 @@ public class BSplineCurveType extends CurveType {
 	 * @see model.CurveType#evalCurveAt(java.util.List, double)
 	 */
 	public Point evalCurveAt(List controlPoints, double t) {
-		
-		System.out.println();
-		System.out.println("t: " + t);
-		System.out.println("=========");
-		
-		for(int i = 0; i < controlPoints.size() ; i++) {
-			Point p = ((ControlPoint)controlPoints.get(0)).getCenter();
-			System.out.println("P" + i + ": " + p.getX() + ", " + p.getY());
-		}
-		
-		System.out.println("=========");
-		
 		List tVector = Matrix.buildRowVector4(t*t*t, t*t, t, 1);
 		List gVector = Matrix.buildColumnVector4(((ControlPoint)controlPoints.get(0)).getCenter(), 
 			((ControlPoint)controlPoints.get(1)).getCenter(), 
@@ -84,16 +73,15 @@ public class BSplineCurveType extends CurveType {
 			((ControlPoint)controlPoints.get(3)).getCenter());
 		
 		Point p = Matrix.eval(tVector, matrix, gVector);
-		p.setLocation(p.getX(), p.getY());
-		
+		p.setLocation(p.getX() / 6, p.getY() / 6);
 		return p;
 	}
 
 	private List bSplineMatrix = 
-		Matrix.buildMatrix4(-1.0f / 6.0f,  3.0f / 6.0f, -3.0f / 6.0f, 1.0f / 6.0f, 
-							 3.0f / 6.0f, -6.0f / 6.0f,  3.0f / 6.0f, 0.0f / 6.0f, 
-							-3.0f / 6.0f,  0.0f / 6.0f,  3.0f / 6.0f, 0.0f / 6.0f, 
-							 1.0f / 6.0f,  4.0f / 6.0f,  1.0f / 6.0f, 0.0f / 6.0f);
+		Matrix.buildMatrix4(-1.0f,  3.0f, -3.0f, 1.0f, 
+							 3.0f, -6.0f,  3.0f, 0.0f, 
+							-3.0f,  0.0f,  3.0f, 0.0f, 
+							 1.0f,  4.0f,  1.0f, 0.0f);
 							 
 	private List matrix = bSplineMatrix;
 }
