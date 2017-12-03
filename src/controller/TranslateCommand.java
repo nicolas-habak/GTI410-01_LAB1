@@ -47,8 +47,8 @@ public class TranslateCommand extends Command {
 			mt.addMememto(shape);
 			AffineTransform t = shape.getAffineTransform();
 			t.translate(x,y);
-			shape.setAffineTransform(t);
-		}
+			shape.setAffineTransform(t);			
+		}		
 	}
 
 	/* (non-Javadoc)
