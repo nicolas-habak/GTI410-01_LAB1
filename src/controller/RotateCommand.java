@@ -49,16 +49,22 @@ public class RotateCommand extends AnchoredTransformationCommand {
 	public void execute() {
 		System.out.println("command: rotate " + thetaDegrees +
                            " degrees around " + getAnchor() + ".");
+		
+		/* Récupération de l'angle fourni par l'utilisateur et conversion en radian */
 		double radAngle = Math.toRadians(thetaDegrees);
 
-		// voluntarily undefined		
 		Iterator iter = objects.iterator();
 		Shape shape;	
+		
+		/* Récupération du point d'ancrage et sauvegarde dans variable p */		
 		Point p = getAnchorPoint(objects);
+		
 		while(iter.hasNext()){
 			shape = (Shape)iter.next();
 			mt.addMememto(shape);
 			AffineTransform t = shape.getAffineTransform();
+			
+			/* Translation pour respecter le point d'ancrage, rotation selon l'angle puis retour à la position d'origine */
 			t.rotate(radAngle, p.getX(), p.getY());		    
 			shape.setAffineTransform(t);
 		}

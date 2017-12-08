@@ -48,17 +48,23 @@ public class ShearXCommand extends AnchoredTransformationCommand {
 
 		System.out.println("command: shearing on x-axis by " + angleDegrees +
 				           " degrees anchored on " + getAnchor());
-		double radAngle = Math.toRadians(angleDegrees);
-		// voluntarily undefined
 		
+		/* Récupération de l'angle fourni par l'utilisateur et conversion en radian */
+		double radAngle = Math.toRadians(angleDegrees);
+				
 		Iterator iter = objects.iterator();
 		Shape shape;
+		
+		/* Récupération du point d'ancrage et sauvegarde dans variable p */		
 		Point p = getAnchorPoint(objects);		
 		
+		/* Début de l'itération */
 		while(iter.hasNext()){
 			shape = (Shape)iter.next();
 			mt.addMememto(shape);
 			AffineTransform t = shape.getAffineTransform();
+			
+			/* Translation pour respecter le point d'ancrage, cisaillement en X puis retour à la position d'origine */
 			t.translate(p.getX(), p.getY());
 			t.shear(radAngle, 0);
 			t.translate(-p.getX(), -p.getY());

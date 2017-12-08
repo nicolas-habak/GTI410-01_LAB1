@@ -50,16 +50,19 @@ public class ScaleCommand extends AnchoredTransformationCommand {
 		System.out.println("command: scaling x by " + sx +
                            " and y by " + sy + " ; anchored on " + getAnchor() );
 
-		// voluntarily undefined
-		
 		Iterator iter = objects.iterator();
 		Shape shape;
+		
+		/* Récupération du point d'ancrage et sauvegarde dans variable p */		
 		Point p = getAnchorPoint(objects);
 		
+		/* Début de l'itération */
 		while(iter.hasNext()){
 			shape = (Shape)iter.next();
 			mt.addMememto(shape);			
 			AffineTransform t = shape.getAffineTransform();	
+			
+			/* Translation pour respecter le point d'ancrage, mise à l'échelle puis retour à la position d'origine */
 			t.translate(p.getX(), p.getY());
 			t.scale(sx, sy);
 			t.translate(-p.getX(), -p.getY());

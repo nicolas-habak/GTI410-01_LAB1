@@ -47,16 +47,22 @@ public class ShearYCommand extends AnchoredTransformationCommand {
 	public void execute() {
 		System.out.println("command: shearing on y-axis to " + angleDegrees +
 				           " degrees anchored on " + getAnchor());
+		
+		/* Récupération de l'angle fourni par l'utilisateur et conversion en radian */
 		double radAngle = Math.toRadians(angleDegrees);		           		
-		// voluntarily undefined		
+		
 		Iterator iter = objects.iterator();
 		Shape shape;
+		
+		/* Récupération du point d'ancrage et sauvegarde dans variable p */		
 		Point p = getAnchorPoint(objects);		
 		
 		while(iter.hasNext()){
 			shape = (Shape)iter.next();
 			mt.addMememto(shape);
 			AffineTransform t = shape.getAffineTransform();
+			
+			/* Translation pour respecter le point d'ancrage, cisaillement en Y puis retour à la position d'origine */
 			t.translate(p.getX(), p.getY());
 			t.shear(0, radAngle);
 			t.translate(-p.getX(), -p.getY());
